@@ -1,0 +1,636 @@
+:doctype: book
+:toc:
+:toclevels: 2
+
+= WildFly for modern application development
+
+[[introduction]]
+== Introduction to WildFly
+. Explain the difference with JBoss EAP
+. Download, install, and start
+.. Standalone mode
+.. Domain mode
+
+[[development]]
+== Development
+
+=== IntelliJ
+
+. Start IntelliJ
+. Select Java EE 7 Samples project. Talk about how IntelliJ provides extensive support around Java EE 7.
+. Click on `Edit Configurations' on top-right to create a new configuration. 
+.. Click on `+' to create a new `JBoss Server' configuration. Select `JBoss', `Local'.
+.. Click on `Configure...'' to configure WildFly application server. Specify the location of installation
+.. Change the name to `WildFly 8.1 CR2'.
+.. Click on `OK' to take all other defaults
+. Expand `jaxrs', select `jaxrs-client'. This will start WildFly, and show localhost:8080 in the browser.
+. Expand through `src/main/test` and show `MyResourceTest`.
+.. Right-click on the project and select `Run All Tests'.
+. Place your cursor in `test1PostAndGet()' method, right-click and select `Run test1PostAndGet()'. This shows a single test can be easily run.
+
+Java EE 7 development using IntelliJ webinar at https://www.youtube.com/watch?v=3BHWpCWzjac provide more details.
+
+=== (NOT COVERING) NetBeans
+
+. Show how WildFly plugin can be installed
+. Open javaee7-samples project and walk through it
+
+=== (NOT COVERING) JBoss Developer Studio/Eclipse
+
+https://www.jboss.org/products/devstudio.html[JBoss Developer Studio] provide comprehensive tooling around Java EE, HTML5, Mobile, and many other technologies needed for modern web application development. The latest 7.1.1 release provide support for Eclipse Kepler SR2, the latest Eclipse release.
+
+. Bring up JBDS
+. Click on `Servers' tab, add a new WildFly instance
+. Open `javaee7-samples/jaxrs/jaxrs-client' project.
+. Right-click, Run As, Maven test
+
+=== Forge
+
+JBoss Forge is the fastest way to build your Java EE applications, and not even tied to a particular IDE or an Application Server.
+
+This section of the script creates a new Java EE app from scratch using Forge, adds the key Java EE technologies. It adds some pre-canned entities, and scaffolds JAX-RS endpoints.
+
+1. In the Forge console, create a new project
+
+    project-new --named simple-javaee --topLevelPackage org.forge.samples.javaee
+
+2. Add some Java EE capabilities:
+
+    servlet-setup; cdi-setup; jpa-setup; rest-setup; constraint-setup; faces-setup; ejb-setup; scaffold-setup
+    ***SUCCESS*** Servlet API has been installed.
+    [simple-javaee]$ ***SUCCESS*** CDI has been installed.
+    [simple-javaee]$ ***SUCCESS*** Persistence (JPA) is installed.
+    [simple-javaee]$ ***SUCCESS*** JAX-RS has been installed.
+    [simple-javaee]$ ***SUCCESS*** JavaServer Faces has been installed.
+    [simple-javaee]$ ***SUCCESS*** Bean Validation is installed.
+    [simple-javaee]$ ***SUCCESS*** JavaServer Faces has been installed.
+    [simple-javaee]$ ***SUCCESS*** EJB has been installed.
+    [simple-javaee]$ ***SUCCESS*** Scaffold was setup successfully.
+
+3. Add some entities:
+
+    [simple-javaee]$ jpa-new-entity --named Author --targetPackage org.forge.samples.javaee.entities
+    ***SUCCESS*** Entity org.forge.samples.javaee.entities.Author created
+    [Author.java]$ jpa-new-entity --named Book --targetPackage org.forge.samples.javaee.entities
+    ***SUCCESS*** Entity org.forge.samples.javaee.entities.Book created
++
+TIP: Use arrow keys to edit the previous command.    
++
+4. Show the entity:
++
+[source,text]
+----
+[Book.java]$ cat .
+package org.forge.samples.javaee.entities;
+
+import javax.persistence.Entity;
+import java.io.Serializable;
+import javax.persistence.Id; 
+----
+
+5. Add some fields to these entities:
+
+    [Book.java]$ jpa-new-field --named title --type String --length 100
+    ***SUCCESS*** Field title created
+    [Book.java]$ jpa-new-field --named isbn --type String --length 30
+    ***SUCCESS*** Field isbn created
+    [Book.java]$ cd ../Author.java
+    [Author.java]$ jpa-new-field --named name --type java.lang.String --length 50
+    ***SUCCESS*** Field name created
+    [Author.java]$ jpa-new-field --named books --type org.forge.samples.javaee.entities.Book --relationshipType One-to-Many 
+    ***SUCCESS*** Relationship One-to-Many created
+
+4. Add some Bean Validation constraints:
+
+    [Author.java]$ constraint-add --onProperty name --constraint Size --max 50
+    ***SUCCESS*** Constraint Size successfully configured
+    [Author.java]$ cd ../Book.java
+    [Book.java]$ constraint-add --onProperty title --constraint Size --max 100
+    ***SUCCESS*** Constraint Size successfully configured
+    [Book.java]$ constraint-add --onProperty isbn --constraint Size --max 30
+    ***SUCCESS*** Constraint Size successfully configured
+
+==== JSF Scaffold
+
+5. Generate JSF scaffold endpoints for the entity.
+
+    [Book.java]$ scaffold-generate --targets org.forge.samples.javaee.entities.Author
+    ***SUCCESS*** Scaffold was generated successfully.
+    [Book.java]$ scaffold-generate --targets org.forge.samples.javaee.entities.Book
+    ***SUCCESS*** Scaffold was generated successfully.
+
+5. Package and deploy the application as:
+
+    mvn clean package
+    jboss-cli.sh -c --command="deploy /Users/arungupta/workspaces/forge-samples/basic_javaee/simple-javaee/target/simple-javaee-1.0.0-SNAPSHOT.war --force"
+
+5. Access the application at http://localhost:8080/simple-javaee-1.0.0-SNAPSHOT/faces/index.xhtml.
+
+==== (NOT COVERING) REST Scaffold
+
+6. Generate REST scaffold endpoints for the entity.
+
+    [Author.java]$ rest-generate-endpoints-from-entities --targets org.forge.samples.javaee.entities.Author --packageName org.forge.samples.javaee.rest
+    ***SUCCESS*** Endpoint created
+    [Author.java]$ rest-generate-endpoints-from-entities --targets org.forge.samples.javaee.entities.Book --packageName org.forge.samples.javaee.rest
+    ***SUCCESS*** Endpoint created
+
+6. Package and deploy the application as:
+
+    mvn clean package
+    jboss-cli.sh -c --command="deploy /Users/arungupta/workspaces/forge-samples/basic_javaee/simple-javaee/target/simple-javaee-1.0.0-SNAPSHOT.war --force"
+
+6. Access the endpoints at http://localhost:8080/simple-javaee-1.0.0-SNAPSHOT/rest/authors and http://localhost:8080/simple-javaee-1.0.0-SNAPSHOT/rest/books.
+
+==== (NOT COVERING) Complete Script
+
+[source,text]
+----
+project-new --named simple-javaee --topLevelPackage org.forge.samples.javaee
+servlet-setup; cdi-setup; jpa-setup --container JBOSS_EAP6; rest-setup; constraint-setup; faces-setup; ejb-setup; scaffold-setup
+jpa-new-entity --named Author --targetPackage org.forge.samples.javaee.entities
+jpa-new-entity --named Book --targetPackage org.forge.samples.javaee.entities
+jpa-new-field --targetEntity org.forge.samples.javaee.entities.Author --named name --type java.lang.String --length 50
+jpa-new-field --targetEntity org.forge.samples.javaee.entities.Book --named title --type String --length 100
+jpa-new-field --targetEntity org.forge.samples.javaee.entities.Book --named isbn --type String --length 30
+constraint-add --javaClass org.forge.samples.javaee.entities.Author --onProperty name --constraint Size --max 50
+constraint-add --javaClass org.forge.samples.javaee.entities.Book --onProperty title --constraint Size --max 100
+constraint-add --javaClass org.forge.samples.javaee.entities.Book --onProperty isbn --constraint Size --max 30
+scaffold-generate --targets org.forge.samples.javaee.entities.Author
+scaffold-generate --targets org.forge.samples.javaee.entities.Book
+rest-generate-endpoints-from-entities --targets org.forge.samples.javaee.entities.Book --packageName org.forge.samples.javaee.rest
+rest-generate-endpoints-from-entities --targets org.forge.samples.javaee.entities.Author --packageName org.forge.samples.javaee.rest
+----
+
+
+
+[[deployment]]
+== Deployment
+=== jboss-cli
+
+WildFly comes with a Command Line Interface management tool for a standalone server or a managed domain. This script is in the `bin` directory of WildFly distrbution and can be invoked by calling `jboss-cli.sh` for Mac/Linux based systems or `jboss-cli.bat` for Windows. It allows a user to connect to a standalone server or domain controller and execute management operations available through the management model.
+
+. Start a WildFly standalone server, if not already running, using the following command:
++
+[source, text]
+----
+standalone.sh
+----
++
+. Use `jboss-cli' to connect with this instance by giving the following command:
++
+[source]
+----
+jboss-cli.sh -c
+----
++
+The `-c` switch connects using the default host (`localhost') and management port (`9990'). These values are specified in `bin/jboss-cli.xml' and can be updated.
++
+This opens up the `jboss-cli' interactive console and shows the following prompt:
++
+[source]
+----
+[standalone@localhost:9990 /]
+----
++
+The prompt indicates that `jboss-cli' is connected to a standalone instance's default management port.
++
+. If WildFly instance is running on a different host and/or port, then `--controller` switch can be used to specify that information.
++
+.. In another shell, start another WildFly instance on a different port using the following command:
++
+[source]
+----
+./bin/standalone.sh -Djboss.socket.binding.port-offset=10000
+----
++
+This will start another WildFly standalone instance on application port 18080 and management port 19090.
++
+.. Use `jboss-cli' to connect with this instance by giving the following command:
++
+[source]
+----
+jboss-cli.sh -c --controller=localhost:19990
+----
++
+This opens up the `jboss-cli' interactive console and shows the following prompt:
++
+[source]
+----
+[standalone@localhost:19990 /]
+----
++
+The prompt indicates that `jboss-cli' is connected to a standalone instance on port `19990'.
+
+WildFly internal management model consists of _management resources_ that are added, removed, or modified by using _operations_ and _commands_. Operations are low level but a comprehensive way to manage the server. Commands are more user-friendly, although most of them still translate into operation requests and some of them even into a few composite operation requests.
+
+All resources are organized in a tree. The path to the node in the tree for a particular resource is its _address_ and is identified by `/`.
+
+Each resource expose information about their state as _attributes_.
+
+Each resource may support child resources.
+
+All resources expose metadata that describes their attributes, operations, and child types. This metadata can be queried by invoking one or more of the _global operations_ supported by the resource.
+
+Command and operation request history is enabled by default. While in the command line session, you can use the arrow keys to go back and forth in the history of commands and operations.
+
+==== Operations
+
+. The operations require one of the following prefixes:
++
+.. `:` to execute against the current node
++
+Type `:` at the prompt and press tab key to see a complete list of operations. This will show the following output:
++
+[source]
+----
+[standalone@localhost:9990 /] :
+add-namespace                read-operation-names         take-snapshot                
+add-schema-location          read-resource                undefine-attribute           
+delete-snapshot              read-resource-description    upload-deployment-bytes      
+full-replace-deployment      reload                       upload-deployment-stream     
+list-snapshots               remove-namespace             upload-deployment-url        
+read-attribute               remove-schema-location       validate-address             
+read-children-names          replace-deployment           validate-operation           
+read-children-resources      resolve-expression           whoami                       
+read-children-types          resolve-internet-address     write-attribute              
+read-config-as-xml           server-set-restart-required  
+read-operation-description   shutdown 
+----
++
+TIP: Operations can be auto completed by using the tab key. For example, type `:r` at the prompt and press tab key to see the list of operations beginning with that letter.
++
+Read a simple attribute using `read-attribute` operation as shown:
++
+[source]
+----
+[standalone@localhost:9990 /] :read-attribute(name=release-version)
+----
++
+This will show the output as:
++
+[source]
+----
+{
+    "outcome" => "success",
+    "result" => "8.0.0.Final-SNAPSHOT"
+}
+----
+
+==== Commands
+
+. Type `help --commands` at the jboss-cli prompt to see a complete list of commands available in current context. This will show the following output:
++
+[source]
+----
+[standalone@localhost:9990 /] help --commands
+alias               deploy              if                  read-attribute      undeploy            
+batch               deployment-info     jdbc-driver-info    read-operation      unset               
+cd                  deployment-overlay  ls                  reload              version             
+clear               echo                module              run-batch           xa-data-source      
+command             echo-dmr            patch               set                 :                   
+connect             help                pwd                 shutdown            
+data-source         history             quit                try  
+----
++
+This can also be achieved by pressing the tab key at the prompt. The list of commands depends upon the current context, i.e. it may change based upon the node address in the domain management model.
++
+TIP: Commands can be auto completed by using the tab key. For example, type letter `d` at the prompt and press tab key to see the list of commands beginning with that letter. Enter space after choosing the command and press tab key again to see the list of arguments to the command.
++
+. Help for any command is available by typing the command name and using `--help` option. For example:
++
+[source]
+----
+[standalone@localhost:9990 /] deploy --help
+----
++
+will show the following output:
++
+[source]
+----
+SYNOPSIS
+
+    deploy ((file_path | --url=deployment_url)
+               [--script=script_name] [--name=deployment_name]
+               [--runtime-name=deployment_runtime_name]
+               [--force | --disabled] [--unmanaged])
+           | --name=deployment_name
+           [--server-groups=group_name (,group_name)* | --all-server-groups]
+           [--headers={operation_header (;operation_header)*}]
+
+DESCRIPTION
+
+  Deploys the application designated by the file_path or enables an already
+  existing but disabled in the repository deployment designated by the name
+  . . .
+----
++
+. `ls` command list the contents of a node path including node types and attributes. Giving this command on the root node shows the following output:
++
+[source]
+----
+[standalone@localhost:9990 /] ls
+core-service                          management-minor-version=0            
+deployment                            name=aruns-macbook-pro                
+deployment-overlay                    namespaces=[]                         
+extension                             process-type=Server                   
+interface                             product-name=undefined                
+path                                  product-version=undefined             
+socket-binding-group                  profile-name=undefined                
+subsystem                             release-codename=WildFly              
+system-property                       release-version=8.0.0.Final-SNAPSHOT  
+launch-type=STANDALONE                running-mode=NORMAL                   
+management-major-version=2            schema-locations=[]                   
+management-micro-version=0            server-state=running
+----
++
+All entries with name/value pairs are attributes and every thing else is a node.
++
+. `cd` command changes the current node path to the specified argument.
++
+Change the path to `management' node by typing the command:
++
+[source]
+----
+[standalone@localhost:9990 /] cd core-service=management
+[standalone@localhost:9990 core-service=management]
+----
++
+The command line prompt in the first line shows that the command was issued from the root node. The prompt in the second line shows the updated node name.
++
+. Deploy an application and check its status by typing the following commands:
++
+[source]
+----
+[standalone@localhost:9990 /] deploy ~/workspaces/wildfly-lab/samples/javaee7/target/javaee7-1.0-SNAPSHOT.war --force
+[standalone@localhost:9990 /] deployment-info 
+NAME                     RUNTIME-NAME             PERSISTENT ENABLED STATUS 
+javaee7-1.0-SNAPSHOT.war javaee7-1.0-SNAPSHOT.war true       true    OK
+----
++
+. Change the HTTP application port from a default value of 8080 to 8090 by giving the following command:
++
+[source]
+----
+[standalone@localhost:9990 /] /socket-binding-group=standard-sockets/socket-binding=http:write-attribute(name=port,value=8090)
+----
++
+and see the output as:
++
+[source]
+----
+{
+    "outcome" => "success",
+    "response-headers" => {
+        "operation-requires-reload" => true,
+        "process-state" => "reload-required"
+    }
+}
+----
++
+The command output indicates that the server should be reloaded. This can be achieved by typing `reload` command at the prompt.
+Now the application is accessible at http://8090/javaee7-1.0-SNAPSHOT/EmployeeList instead of the port 8080.
++
+Any change to the management model is persisted to the configuration file. Lets change the port back to 8080 by giving the following command:
++
+[source]
+----
+[standalone@localhost:9990 /] /socket-binding-group=standard-sockets/socket-binding=http:write-attribute(name=port,value=8080)
+----
+
+==== (NOT COVERING) GUI
+
+CLI can be started with a GUI instead of a command line. It allows you to browse through different nodes and commands and operations supported on a node. Commands are automatically created and can be submitted to the server. Applications can be deployed and undeployed as well.
+
+. Type the following command to start CLI with GUI:
++
+[source]
+----
+standalone.sh --gui
+----
++
+The complete domain model is shown in a separate window.
+. Right-click on any node to see the list of supported operations. The command is dynamically created and populated in the `cmd>' text box.
+. This command can be submitted to the server by clicking on `Submit' button. Command output is shown.
+. Type `serv' in `Filter' box to search for any nodes and attributes that contains this phrase.
+
+
+=== (NOT COVERING) Non-interactive mode
+
+. Deploy the application using the following command:
++
+[source]
+----
+jboss-cli.sh --connect --command="deploy target/javaee7-1.0-SNAPSHOT.war --force"
+----
++
+The directory name of the war file in the command may be different depending upon how `jboss-cli' was invoked. Verify the server log to ensure that the application was redeployed. Look for specific timestamp in the log entries.
+
+==== (NOT COVERING) Batch
+
+The batch mode allows one to group commands and operations and execute them together as an atomic unit, i.e., if at least one of the commands or operations fails, all the other successfully executed commands and operations in the batch are rolled back.
+
+=== (NOT COVERING) Admin Console
+
+Shown during RBAC
+
+=== (NOT COVERING) File system-based
+
+Deploying archives such as war, ear, and rar files using file system is as simple as copying to `standalone/deployments` directory. The deployment can be configured for auto-deploy or manual mode.
+
+Any archive can be placed in `standalone/deployments` directory and is automatically deployed to the server. This is the default behavior.
+
+CAUTION: This deployment mode is only intended to be used during development phase. Managed domain mode is recommended if running production systems.
+
+. Clone the github repo by giving the following command:
++
+[source]
+----
+git clone https://github.com/arun-gupta/wildfly-lab.git
+----
++
+. Change directory to `samples/javaee7` and build the sample as:
++
+[source]
+----
+mvn install
+----
++
+. Copy the war file to `standalone/deployments` directory using the following command:
++
+[source]
+----
+cp target/javaee7-1.0-SNAPSHOT.war /Users/arungupta/workspaces/wildfly/build/target/wildfly-8.0.0.Final-SNAPSHOT/standalone/deployments
+----
++
+Make sure to change the directory name to match your filesystem.
++
+. Verify the deployed application by accessing the webpage http://localhost:8080/javaee7-1.0-SNAPSHOT/EmployeeList.
+
+=== Maven plugin
+
+The wildfly-maven-plugin is used to deploy, redeploy, undeploy or run your application. You can also deploy or undeploy artifacts, such as JDBC drivers, and add or remove resources. There is also the ability to execute CLI commands.
+
+. Note that `samples/javaee7/pom.xml` contains the following fragment:
++
+[source, xml]
+----
+<plugin>
+    <groupId>org.wildfly.plugins</groupId>
+    <artifactId>wildfly-maven-plugin</artifactId>
+    <version>1.0.0.Beta1</version>
+    <executions>
+        <execution>
+            <phase>install</phase>
+            <goals>
+                <goal>deploy</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
++
+This specifies the `wildfly-maven-plugin' description to `pom.xml'. It also invokes the plugin `deploy' target during the standard maven `install' phase.
++
+. Start a WildFly instance as:
++
+[source]
+----
+standalone.sh
+----
++
+. Deploy the application by giving the command:
++
+[source]
+----
+mvn wildfly:deploy
+----
++
+or
++
+[source]
+----
+mvn install
+----
++
+. Access the web page at http://localhost:8080/javaee7/EmployeeList.
+
+=== (NOT COVERING) REST API
+
+[[testing]]
+== Testing
+
+Arquillian brings the test to runtime so that you don't have to manage the runtime from the test (or build). It covers all aspects of test execution:
+
+. Manage the lifecycle of the container (or containers)
+. Bundling the test case, dependent classes and resources into a ShrinkWrap archive (or archives)
+. Deploy the archive (or archives) to the container (or containers)
+. Enriching the test case by providing dependency injection and other declarative services
+. Executing the tests inside (or against) the container
+. Capturing the results and returning them to the test runner for reporting
+
+Three guiding principles:
+
+. Tests should be portable to any supported container
+. Tests should be executable from both the IDE and the build tool
+. The platform should extend or integrate existing test frameworks
+
+Generate a simple Java EE 7 sample with pre-defined Arquillian dependencies:
+
+[source,text]
+----
+ mvn --batch-mode archetype:generate \\
+     -DarchetypeGroupId=org.javaee-samples \\
+     -DarchetypeArtifactId=javaee7-arquillian-archetype \\
+     -DarchetypeVersion=1.0.0 \\
+     -DarchetypeRepository=http://dl.bintray.com/javaee-samples/JavaEE-Samples \\
+     -DgroupId=org.wildfly.samples.javaee7.arquillian \\
+     -DartifactId=arquillian
+----
+
+=== Remote container
+Remote Container resides in a separate JVM from the test runner. Its lifecycle may be managed by Arquillian, or Arquillian may bind to a container that is already started.
+
+=== Managed container
+Managed Container is simply a remote container that also includes lifecycle management (start and stop). Container process is started in a different JVM. Once the container is up and running, it just behaves like a remote container.
+
+[[rbac]]
+== RBAC
+
+Role Based Access Control (RBAC) is the ability to restrict access to system or certain portions of it to authorized users. For JBoss AS 7.x or JBoss EAP 6.0 and 6.1, the web-based administrative console had an all-or-nothing approach. So if a user can authenticate with management security realm, then he'll have all the privileges. This might be OK for smaller deployments but the roles are typically divided for mission critical deployments and a finer-grained control is required.
+
+WildFly 8 introduces RBAC using different roles. There are essential 7 different roles in 2 different categories – administrative and privileged:
+
+. Monitor
+. Operator
+. Maintainer
+. Deployer
+. Administrator
+. Auditor
+. Super User
+
+Each Role is defined as a set of Permissions and Permissions specify what Actions are permitted by the logged in user, which is basically lookup, write, or delete.
+
+Show basic functionality using Admin Console from https://vimeo.com/78780176[Part 1], https://vimeo.com/78785944[Part 2], https://vimeo.com/78786992[Part 3]. Here are the features that need to be highlighted:
+
+. Start using `.bin/domain.sh`
+. Access Admin Console at http://localhost:9090, show the error message.
+. Create user in management realm using add-user.sh, use ``admin'' as user and password.
+. Reload the Admin Console and show that login now works.
+. Click on `Administration' tab and explain Access Control Providers. WildFly 8 comes with two access control providers:
+.. `simple' provider, the default one, gives all privileges to any authenticated administrator. This provides compatibility with older releases.
+.. `rbac' provider allows you to setup configuration that will map users to different roles.
+. Change access control provider by giving the following command interactively on `jboss-cli`:
++
+[source,text]
+----
+[domain@localhost:9990 /] /core-service=management/access=authorization:write-attribute(name=provider,value=rbac)
+[domain@localhost:9990 /] reload --host=master
+----
++
+. Hmm, Admin Console is not accessible now. Restarting the server also did not help, debugging ...
+. What to show ?
+.. Show information about the logged in user on top-right.
+.. A user in `Super User' role can act to run in any role by clicking on `Run as'. Click on `Run as' and select drop-down list box to see the list of available roles.
+.. Select the ‘Monitor’ role and click on `Run As'.
+... The application has to be reloaded for changes to take effect. Click on `Confirm' to reload the application. After the reload, clicking on the user on top-right in admin console will display the selected role as `Run as Monitor'.
+... Click on `Manage Deployments' and check that `Add', ‘Remove’, and similar buttons are not present.
+... Click on `Profile', `Data Sources' and check that all data sources are visible but not editable. This is identified by the fact that `Add', `Remove', and `Disable' buttons are not available as shown.
+... Click on `Administration' tab and make sure the user does not have access to it.
+.. Feel free to select other roles and observe how different options are enabled/disabled.
+.. Talk about how roles can be assigned to users and groups.
+
+== Clustering + Session failover
+
+Run the video from https://vimeo.com/89157225[]. It shows:
+
+. Introduction to WildFly and Managed Domain concepts
+. Setup up a 2-instance cluster
+. Deploy a WAR file to the cluster using centralized administration from admin console
+. Access the application on one node and add HTTP session attributes on it
+. Shutdown that instance and show HTTP session failover by accessing the application on other instance
+
+[[paas]]
+== PaaS
+
+=== OpenShift
+
+==== IntelliJ
+
+. Create an OpenShift application using WildFly cartridge
+. IntelliJ, Preferences, search on "Cloud", setup OpenShift credentials
+.. Click on Test Connection to test the connection
+.. Talk about uploading public SSH key (only visible if the keys are not previously uploaded)
+. Check out application from git and show how it can be directly deployed from IntelliJ
+
+Complete video at: https://www.youtube.com/watch?v=H1pinrncv2A
+
+==== (NOT COVERING) JBDS
+
+. Create an OpenShift application using WildFly cartridge
+. Access the WildFly administration console using port forwarding
+. Import the created application in JBoss Developer Studio/IntelliJ
+. Make changes to the application and view them in the deployed application
+. Add a simple Java EE 7 component to the application
+
+=== (NOT COVERING) Cloudbees
