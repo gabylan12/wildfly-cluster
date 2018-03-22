@@ -1,0 +1,13 @@
+# Mark the commands below to be run as a batch
+batch
+
+/system-property=foo:add(value=bar)
+
+/interface=management/:write-attribute(name=inet-address,value=${jboss.bind.address.management:172.18.0.2})
+/interface=public/:write-attribute(name=inet-address,value=${jboss.bind.address:172.18.0.2})
+/interface=private/:write-attribute(name=inet-address,value=${jboss.bind.address.private:172.18.0.2})
+
+#/interface=public/:write-attribute(name=inet-address,value=$NODE)
+
+# Execute the batch
+run-batch

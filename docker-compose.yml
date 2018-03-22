@@ -1,0 +1,50 @@
+version: '3'
+services:
+  node1:
+    container_name: node1
+    build: 
+     context: .
+     dockerfile: Dockerfile
+     args: 
+      NODE: -Djboss.node.name=server1
+      SCRIPT: execute-node1.sh
+    ports:
+     - "8080:8080"
+     - "9990:9990"
+    volumes:
+     - "/hosthome/gabriel/docker/jboss/wildfly-samples/clustering/http/target:/opt/jboss/wildfly/standalone/deployments"
+#    networks:
+#       votenet:
+#         ipv4_address: 172.28.0.2
+  node2:
+    container_name: node2
+    build: 
+     context: .
+     dockerfile: Dockerfile
+     args: 
+      NODE: -Djboss.node.name=server2
+      SCRIPT: execute-node2.sh
+    ports:
+     - "8081:8080"
+     - "9991:9990"
+    volumes:
+     - "/hosthome/gabriel/docker/jboss/wildfly-samples/clustering/http/target:/opt/jboss/wildfly/standalone/deployments"
+#    networks:
+#       votenet:
+#         ipv4_address: 172.28.0.3
+
+#networks: 
+#  wildnetwork:
+#  votenet:
+#    driver: bridge
+#    ipam:
+#      config:
+#        - subnet: 172.28.0.0/16
+#         gateway: 172.28.0.254
+#    front:
+#        ipam:
+#            driver: default
+#            config:
+#                - subnet: 172.28.0.0/16
+#                gateway: 172.28.5.254
+
