@@ -1,5 +1,5 @@
 FROM jboss/wildfly:10.1.0.Final
-ENV JBOSS_CONFIG standalone-ha.xml
+ENV JBOSS_CONFIG standalone-full-ha.xml
 ARG NODE
 ARG SCRIPT
 

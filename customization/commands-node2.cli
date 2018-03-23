@@ -3,11 +3,14 @@ batch
 
 /system-property=foo:add(value=bar)
 
-/interface=management/:write-attribute(name=inet-address,value=${jboss.bind.address.management:172.18.0.3})
-/interface=public/:write-attribute(name=inet-address,value=${jboss.bind.address:172.18.0.3})
-/interface=private/:write-attribute(name=inet-address,value=${jboss.bind.address.private:172.18.0.3})
+/interface=management/:write-attribute(name=inet-address,value=${jboss.bind.address.management:10.5.0.3})
+/interface=public/:write-attribute(name=inet-address,value=${jboss.bind.address:10.5.0.3})
+/interface=private/:write-attribute(name=inet-address,value=${jboss.bind.address.private:10.5.0.3})
 
-#/interface=public/:write-attribute(name=inet-address,value=$NODE)
+/subsystem=infinispan/cache-container=infinispan_cache:add(aliases=["infinispan_cache"],default-cache=default_cache,start=LAZY)
+/subsystem=infinispan/cache-container=infinispan_cache/transport=TRANSPORT:add(lock-timeout=60000)
+/subsystem=infinispan/cache-container=infinispan_cache/replicated-cache=default_cache:add(mode=SYNC)
+
 
 # Execute the batch
 run-batch
