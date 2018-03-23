@@ -7,7 +7,7 @@ services:
      dockerfile: Dockerfile
      args: 
       NODE: -Djboss.node.name=server1
-      SCRIPT: execute-node1.sh
+      NODE_NAME: node1
     ports:
      - "8080:8080"
      - "9990:9990"
@@ -23,7 +23,7 @@ services:
      dockerfile: Dockerfile
      args: 
       NODE: -Djboss.node.name=server2
-      SCRIPT: execute-node2.sh
+      NODE_NAME: node2
     ports:
      - "8081:8080"
      - "9991:9990"
