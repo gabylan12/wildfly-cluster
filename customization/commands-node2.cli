@@ -10,5 +10,7 @@ batch
 /subsystem=infinispan/cache-container=infinispan_cache/:add(default-cache=default_cache, jndi-name=java:jboss/infinispan/container/infinispan_cache, start=LAZY)
 /subsystem=infinispan/cache-container=infinispan_cache/transport=TRANSPORT/:add(lock-timeout=60000, stack=tcp)
 /subsystem=infinispan/cache-container=infinispan_cache/replicated-cache=default_cache:add(mode=SYNC)
+/subsystem=infinispan/cache-container=infinispan_cache/replicated-cache=default_cache/expiration=EXPIRATION:add(lifespan=10000,max-idle=10000)
+
 # Execute the batch
 run-batch
