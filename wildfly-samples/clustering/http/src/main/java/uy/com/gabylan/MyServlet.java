@@ -1,5 +1,4 @@
 package uy.com.gabylan;
-import org.infinispan.Cache;
 import org.infinispan.manager.CacheContainer;
 
 import javax.annotation.Resource;
@@ -13,7 +12,7 @@ import java.io.IOException;
 @WebServlet(value = "/MyServlet")
 public class MyServlet extends HttpServlet {
 
-    @Resource(name = "java:jboss/infinispan/container/infinispan_cache")
+    @Resource(lookup = "java:jboss/infinispan/container/infinispan_cache")
     CacheContainer cache;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)

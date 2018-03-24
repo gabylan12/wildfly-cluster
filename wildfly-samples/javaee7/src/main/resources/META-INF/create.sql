@@ -1,1 +1,0 @@
-CREATE TABLE EMPLOYEE ("ID" INTEGER not null primary key, "NAME" VARCHAR(50) not null)

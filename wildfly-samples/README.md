@@ -1,3 +1,0 @@
-WildFly Related Samples
-=======================
-
