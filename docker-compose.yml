@@ -38,6 +38,11 @@ services:
      ports:
       - "8280:8080"
       - "50000:50000"
+  nexus:
+     container_name: nexus
+     image: sonatype/nexus:2.14.8-01
+     ports:
+      - "8580:8081"
 networks:
  vpcbr:
     driver: bridge
