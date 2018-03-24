@@ -32,7 +32,12 @@ services:
     networks:
       vpcbr:
         ipv4_address: 10.5.0.3
-
+  jenkins:
+     container_name: jenkins
+     image: jenkins:2.60.3
+     ports:
+      - "8280:8080"
+      - "50000:50000"
 networks:
  vpcbr:
     driver: bridge
