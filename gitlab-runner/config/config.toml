@@ -1,0 +1,23 @@
+concurrent = 1
+check_interval = 0
+
+[[runners]]
+  name = "runner-wildfly-samples"
+  url = "http://192.168.99.100"
+  token = "3b8b74fad0d8c6c0d490351d006fd2"
+  executor = "docker"
+  [runners.docker]
+    tls_verify = false
+    image = "jboss/wildfly:10.1.0.Final"
+    privileged = false
+    disable_cache = false
+    volumes = ["/cache"]
+    shm_size = 0
+  [runners.cache]
+
+[[runners]]
+  name = "83a5d0ac8e89"
+  url = "http://192.168.99.100/"
+  token = "0921f2df21326e425eea87f6885d5f"
+  executor = "shell"
+  [runners.cache]

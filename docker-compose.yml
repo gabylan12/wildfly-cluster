@@ -1,48 +1,80 @@
 version: '3'
 services:
-  node1:
-    container_name: node1
-    build: 
-     context: .
-     dockerfile: Dockerfile
-     args: 
-      NODE: -Djboss.node.name=server1
-      NODE_NAME: node1
-    ports:
-     - "8080:8080"
-     - "9990:9990"
-    volumes:
-     - "/hosthome/gabriel/docker/jboss/wildfly-samples/clustering/http/target:/opt/jboss/wildfly/standalone/deployments"
-    networks:
-      vpcbr:
-        ipv4_address: 10.5.0.2
-  node2:
-    container_name: node2
-    build: 
-     context: .
-     dockerfile: Dockerfile
-     args: 
-      NODE: -Djboss.node.name=server2
-      NODE_NAME: node2
-    ports:
-     - "8081:8080"
-     - "9991:9990"
-    volumes:
-     - "/hosthome/gabriel/docker/jboss/wildfly-samples/clustering/http/target:/opt/jboss/wildfly/standalone/deployments"
-    networks:
-      vpcbr:
-        ipv4_address: 10.5.0.3
-  jenkins:
-     container_name: jenkins
-     image: jenkins:2.60.3
+#  node1:
+#    container_name: node1
+#    build:
+#     context: .
+#     dockerfile: Dockerfile
+#     args:
+#      NODE: -Djboss.node.name=server1
+#      NODE_NAME: node1
+#    ports:
+#     - "8080:8080"
+#     - "9990:9990"
+#    volumes:
+#     - "/hosthome/gabriel/docker/jboss/wildfly-samples/clustering/http/target:/opt/jboss/wildfly/standalone/deployments"
+#    networks:
+#      vpcbr:
+#        ipv4_address: 10.5.0.2
+#  node2:
+#    container_name: node2
+#    build:
+#     context: .
+#     dockerfile: Dockerfile
+#     args:
+#      NODE: -Djboss.node.name=server2
+#      NODE_NAME: node2
+#    ports:
+#     - "8081:8080"
+#     - "9991:9990"
+#    volumes:
+#     - "/hosthome/gabriel/docker/jboss/wildfly-samples/clustering/http/target:/opt/jboss/wildfly/standalone/deployments"
+#    networks:
+#      vpcbr:
+#        ipv4_address: 10.5.0.3
+#  jenkins:
+#     container_name: jenkins
+#     image: jenkins:2.60.3
+#     ports:
+#      - "8280:8080"
+#      - "50000:50000"
+#  nexus:
+#     container_name: nexus
+#     image: sonatype/nexus:2.14.8-01
+#     ports:
+#      - "8580:8081"
+  gitlab:
+     container_name: gitlab
+     image: gitlab/gitlab-ce:10.6.4-ce.0
      ports:
-      - "8280:8080"
-      - "50000:50000"
-  nexus:
-     container_name: nexus
-     image: sonatype/nexus:2.14.8-01
-     ports:
-      - "8580:8081"
+      - "80:80"
+     volumes:
+      - "/hosthome/gabriel/docker/jboss/gitlab/etc:/etc/gitlab"
+      - "/hosthome/gabriel/docker/jboss/gitlab/opt:/var/opt/gitlab"
+      - "/hosthome/gabriel/docker/jboss/gitlab/log:/var/log/gitlab"
+  gitlab-runner:
+       container_name: gitlab-runner
+       image: gitlab/gitlab-runner:ubuntu-v10.6.0
+       volumes:
+        - "/hosthome/gabriel/docker/jboss/gitlab-runner/config:/etc/gitlab-runner"
+        - "/hosthome/gabriel/docker/jboss/gitlab-runner/docker.sock:/var/run/docker.sock"
+  docker-registry:
+    container_name: docker-registry
+    image: registry:2.5.2
+    ports:
+      - "5000:5000"
+    volumes:
+      - "/hosthome/gabriel/docker/jboss/registry-data:/var/lib/registry/docker/registry/v2"
+  docker-registry-web:
+      container_name: docker-registry-web
+      image: hyper/docker-registry-web:v0.1.2
+      ports:
+        - "8880:8080"
+      links:
+        - "docker-registry"
+      environment:
+        - REGISTRY_URL=http://192.168.99.100:5000/v2
+        - REGISTRY_NAME=192.168.99.100:5000
 networks:
  vpcbr:
     driver: bridge

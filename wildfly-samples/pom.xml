@@ -32,6 +32,6 @@
     </dependencies>
     
     <modules>
-        <module>undertow</module>
+        <module>clustering</module>
     </modules>
 </project>
