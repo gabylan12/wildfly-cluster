@@ -1,5 +1,7 @@
 # Mark the commands below to be run as a batch
 batch
+/subsystem=messaging-activemq/server=default:write-attribute(name=cluster-user,value=admin123
+/subsystem=messaging-activemq/server=default:write-attribute(name=cluster-password,value=admin)
 
 /system-property=foo:add(value=bar)
 
