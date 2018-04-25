@@ -17,11 +17,15 @@ public class MyServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.getWriter().println(cache.getCache().get("fuck"));
 
-        response.getWriter().println("chupamela");
-        cache.getCache().put("fuck",request.getParameter("fuck"));
+        for (Map.Entry<CacheKey, Object> entry : cache.getCache().entrySet()) {
+            response.getWriter().println(entry.getKey().toString() + ": " + entry.getValue().toString());
+        }
+
+        for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+            cache.getCache().put(entry.getKey(), entry.getValue());
+        }
+
     }
-
 
 }
