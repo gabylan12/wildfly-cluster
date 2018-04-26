@@ -21,15 +21,8 @@ public class MyServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        for (Map.Entry<Object, Object> entry : cache.getCache().entrySet()) {
-            response.getWriter().println(entry.getKey().toString() + ": " + entry.getValue().toString());
-        }
-
-        for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
-            cache.getCache().put(entry.getKey(), entry.getValue());
-        }
-
-
+        response.getWriter().println(cache.getCache().get("param1"));
+        cache.getCache().put("param1",request.getParameter("param1"));
     }
 
 }
