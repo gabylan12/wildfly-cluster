@@ -15,6 +15,10 @@ Wildlfy node 2 in cluster running on port 8081
 
 A nexus instance running on port 8580
 
+url: http://localhost:8580/nexus/#welcome
+user: admin
+password: admin123
+
 
 ## Test cluster
 
@@ -28,6 +32,13 @@ http://localhost:8081/http-1.1-SNAPSHOT/MyServlet?param1=value2
 
 on wildfly-samples folder run
 
+### compile
 mvn clean package
+
+### deploy on nexus
+mvn clean deploy
+
+### change version
+mvn versions:set -DnewVersion=X.X
 
 
