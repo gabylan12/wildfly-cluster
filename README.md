@@ -1,14 +1,14 @@
 # wildfly-cluster
 A wildfly cluster written in docker-compose
 
-##Pre Requisites
+## Pre Requisites
 at least docker-compose version 1.18.0 installed
 at least Docker version 17.12.1-ce installed
 
-##Node 1
+## Node 1
 Wildfly node 1 in cluster
 
-##Node 2
+## Node 2
 Wildlfy node 2 in cluster
 
 
