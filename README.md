@@ -19,6 +19,13 @@ url: http://localhost:8580/nexus/#welcome
 user: admin
 password: admin123
 
+## Gitlab
+a gitlab instance to store the wildfly-samples code.
+listening port 80
+
+## Gitlab runner
+a gitlab runner to run the CI server
+
 
 ## Test cluster
 
@@ -42,3 +49,10 @@ mvn clean deploy
 mvn versions:set -DnewVersion=X.X
 
 
+# Integration continous
+
+1 - package the code in a maven container
+
+2 - deploy the code in a maven container to wildfly node 1
+
+3 - deploy the code in a maven container to wildfly node 2
