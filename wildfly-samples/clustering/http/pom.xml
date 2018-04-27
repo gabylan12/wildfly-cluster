@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.samples.wildfly.clustering</groupId>
         <artifactId>clustering</artifactId>
-        <version>1.1</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -42,6 +42,7 @@
                     </archive>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -51,8 +52,55 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.2.1.Final</version>
+                <configuration>
+                    <hostname>192.168.99.100</hostname>
+                    <username>admin</username>
+                    <password>Admin#70365</password>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
-
+    <profiles>
+    <profile>
+        <id>wildfly-deploy-node1</id>
+        <build>
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.2.1.Final</version>
+                <configuration>
+                    <hostname>192.168.99.100</hostname>
+                    <username>admin</username>
+                    <password>Admin#70365</password>
+                </configuration>
+            </plugin>
+        </plugins>
+        </build>
+    </profile>
+    <profile>
+        <id>wildfly-deploy-node2</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.wildfly.plugins</groupId>
+                    <artifactId>wildfly-maven-plugin</artifactId>
+                    <version>1.2.1.Final</version>
+                    <configuration>
+                        <hostname>192.168.99.100</hostname>
+                        <port>9991</port>
+                        <username>admin</username>
+                        <password>Admin#70365</password>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    </profiles>
 </project>

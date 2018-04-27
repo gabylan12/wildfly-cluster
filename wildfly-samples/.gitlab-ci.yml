@@ -4,9 +4,14 @@ compile:
   script:
    - mvn clean package
 
-deploy:
+deploy-node1:
   stage: deploy
   image: maven:3.5.3-jdk-10
   script:
-   -   mvn wildfly:deploy
+   -   mvn deploy -P wildfly-deploy-node1 --settings settings.xml
+deploy-node2:
+  stage: deploy
+  image: maven:3.5.3-jdk-10
+  script:
+   -   mvn deploy -P wildfly-deploy-node2 --settings settings.xml
 

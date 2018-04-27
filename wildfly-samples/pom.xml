@@ -4,7 +4,7 @@
 
     <groupId>org.samples.wildfly</groupId>
     <artifactId>wildfly</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WildFly Samples</name>
@@ -38,11 +38,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://localhost:8580/nexus/content/repositories/snapshots</url>
+            <url>http://192.168.99.100:8580/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://localhost:8580/nexus/content/repositories/releases</url>
+            <url>http://192.168.99.100:8580/nexus/content/repositories/releases</url>
         </repository>
     </distributionManagement>
 

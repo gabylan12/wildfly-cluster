@@ -32,6 +32,18 @@ services:
     networks:
       vpcbr:
         ipv4_address: 10.5.0.3
+  gitlab:
+    container_name: gitlab
+    image: gitlab/gitlab-ce:10.7.1-ce.0
+    hostname: 192.168.99.100
+    ports:
+     - "80:80"
+  gitlab-runner:
+    container_name: gitlab-runner
+    image: gitlab/gitlab-runner:v10.7.0
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+ #     - "/hosthome/gabriel/docker/jboss/gitlab-runner/config:/etc/gitlab-runner"
   jenkins:
      container_name: jenkins
      image: jenkins:2.60.3
