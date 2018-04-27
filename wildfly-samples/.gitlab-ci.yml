@@ -1,0 +1,12 @@
+compile:
+  stage: build
+  image: maven:3.5-slim
+  script:
+   - mvn clean package
+
+deploy:
+  stage: deploy
+  image: maven:3.5.3-jdk-10
+  script:
+   -   mvn wildfly:deploy
+
