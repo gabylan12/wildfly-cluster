@@ -37,9 +37,9 @@ services:
     image: gitlab/gitlab-ce:10.7.1-ce.0
     hostname: 192.168.99.100
     volumes:
-     - "/hosthome/gabriel/docker/jboss/gitlab/config:/etc/gitlab"
-     - "/hosthome/gabriel/docker/jboss/gitlab/logs:/var/log/gitlab"
-     - "/hosthome/gabriel/docker/jboss/gitlab/data:/var/opt/gitlab"
+     - "/home/docker/jboss/gitlab/config:/etc/gitlab"
+     - "/home/docker/jboss/gitlab/logs:/var/log/gitlab"
+     - "/home/docker/jboss/gitlab/data:/var/opt/gitlab"
     ports:
      - "80:80"
   gitlab-runner:
