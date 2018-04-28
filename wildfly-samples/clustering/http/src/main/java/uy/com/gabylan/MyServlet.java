@@ -16,7 +16,7 @@ import org.infinispan.manager.CacheContainer;
 public class MyServlet extends HttpServlet {
 
     @Resource(lookup = "java:jboss/infinispan/container/infinispan_cache")
-    CacheContainer cache;
+    static CacheContainer cache;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

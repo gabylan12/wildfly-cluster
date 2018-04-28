@@ -11,7 +11,13 @@ cache:
 image: maven:3.5-slim
 
 variables:
-  MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2
+   MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2
+   VERSION: '1.6'
+   SERVER_NEXUS: '192.168.99.100:8580'
+   SERVER_WILDFLY_NODE1: '192.168.99.100'
+   SERVER_WILDFLY_NODE2: '192.168.99.100'
+   SERVER_WILDFLY_PORT1: '9990'
+   SERVER_WILDFLY_PORT2: '9991'
 
 test:
   stage: test
@@ -31,13 +37,13 @@ get-artifacts:
       - artifacts/
   script:
    - mkdir artifacts
-   - wget http://192.168.99.100:8580/nexus/content/repositories/releases/org/samples/wildfly/clustering/http/1.3/http-1.3.war --output-document=artifacts/http.war
+   - wget http://$SERVER_NEXUS/nexus/content/repositories/releases/org/samples/wildfly/clustering/http/$VERSION/http-$VERSION.war --output-document=artifacts/http.war
 
 deploy-node1:
   stage: deploy
   image: jboss/wildfly:11.0.0.Final
   script:
-   -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=192.168.99.100:9990 --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
+   -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=${SERVER_WILDFLY_NODE1}:${SERVER_WILDFLY_PORT1} --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
   dependencies:
    - get-artifacts
 
@@ -45,7 +51,7 @@ deploy-node2:
   stage: deploy
   image: jboss/wildfly:11.0.0.Final
   script:
-   -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=192.168.99.100:9991 --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
+   -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=${SERVER_WILDFLY_NODE2}:${SERVER_WILDFLY_NODE2} --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
   dependencies:
    - get-artifacts
 
