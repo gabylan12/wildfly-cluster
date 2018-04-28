@@ -1,6 +1,7 @@
 stages:
-  - test
-  - package
+#  - test
+#  - package
+  - pre-deploy
   - deploy
 
 cache:
@@ -12,21 +13,31 @@ image: maven:3.5-slim
 variables:
   MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2
 
-test:
-  stage: test
-  script:
-   - mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
+#test:
+#  stage: test
+#  script:
+#   - mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
 
-deploy-nexus:
-  stage: package
-  script:
-   - mvn deploy --settings settings.xml
+#deploy-nexus:
+#  stage: package
+#  script:
+#   - mvn deploy --settings settings.xml
 
-deploy-wildfly:
-  stage: deploy
+get-artifacts:
+  stage: pre-deploy
   image: gabylan/debian-wget
+  artifacts:
+      paths:
+      - artifacts/
   script:
-   - wget http://192.168.99.100:8580/nexus/content/repositories/releases/org/samples/wildfly/clustering/http/1.3/http-1.3.war --output-document=http.war
-
+   - mkdir artifacts
+   - wget http://192.168.99.100:8580/nexus/content/repositories/releases/org/samples/wildfly/clustering/http/1.3/http-1.3.war --output-document=artifacts/http.war
+deploy:
+  stage: deploy
+  image: jboss/wildfly:10.1.0.Final
+  script:
+   -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=remoteIP:9990 --user=admin --password=Admin#70365--command="deploy artifacts/http.war"
+  dependencies:
+   - get-artifacts
 
 
