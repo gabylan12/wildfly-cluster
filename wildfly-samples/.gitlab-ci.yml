@@ -18,9 +18,15 @@ test:
    - mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
 
 deploy-nexus:
-  stage: deploy
+  stage: package
   script:
    - mvn deploy --settings settings.xml
+
+deploy-wildfly:
+  stage: deploy
+  image: gabylan/debian-wget
+  script:
+   - wget http://192.168.99.100:8580/nexus/content/repositories/releases/org/samples/wildfly/clustering/http/1.3/http-1.3.war --output-document=http.war
 
 
 
