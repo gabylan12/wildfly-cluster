@@ -43,13 +43,11 @@ services:
     image: gitlab/gitlab-runner:v10.7.0
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
- #     - "/hosthome/gabriel/docker/jboss/gitlab-runner/config:/etc/gitlab-runner"
-  jenkins:
-     container_name: jenkins
-     image: jenkins:2.60.3
-     ports:
-      - "8280:8080"
-      - "50000:50000"
+  sonar:
+    container_name: sonarqube
+    image: sonarqube:7.1
+    ports:
+      - "9000:9000"
   nexus:
      container_name: nexus
      image: sonatype/nexus:2.14.8-01

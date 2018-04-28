@@ -56,3 +56,19 @@ mvn versions:set -DnewVersion=X.X
 2 - deploy the code in a maven container to wildfly node 1
 
 3 - deploy the code in a maven container to wildfly node 2
+
+## Add gitlab runner
+
+1 - docker exec -it gitlab-runner gitlab-runner register
+
+## Add build breaker
+
+docker exec -it sonarqube /bin/bash
+
+cd extensions/plugins/
+
+wget -c https://github.com/SonarQubeCommunity/sonar-build-breaker/releases/download/2.1/sonar-build-breaker-plugin-2.1.jar
+
+exit
+
+docker restart sonarqube 
