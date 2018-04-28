@@ -1,3 +1,8 @@
+stages:
+  - test
+  - package
+  - deploy
+
 cache:
   paths:
     - .m2/
@@ -7,27 +12,27 @@ image: maven:3.5-slim
 variables:
   MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2
 
-test:
-  stage: test
-  script:
-   - mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
+#test:
+#  stage: test
+#  script:
+#   - mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
 
-deploy-nexus:
-  stage: deploy
-  script:
-   - mvn deploy --settings settings.xml
-
-
+#deploy-nexus:
+#  stage: package
+#  script:
+#   - mvn deploy --settings settings.xml
 
 
 deploy-node1:
   stage: deploy
-  image: maven:3.5.3-jdk-10
+  image: debian:jessie-slim
   script:
-   -   mvn deploy -P wildfly-deploy-node1 --settings settings.xml
-deploy-node2:
-  stage: deploy
-  image: maven:3.5.3-jdk-10
-  script:
-   -   mvn deploy -P wildfly-deploy-node2 --settings settings.xml
+   - wget http://192.168.99.100:8580/nexus/content/repositories/releases/org/samples/wildfly/clustering/http/1.3/http-1.3.war --outputfile=http.war
+
+#deploy-node1:
+#  stage: deploy
+#  image: jboss/wildfly:10.1.0.Final
+#  script:
+#   - /opt/jboss/wildfly/bin/jboss-cli.sh --connect controller=192.168.99.100:9990 --user=admin --password=Admin#70365 --command="deploy http.war"
+
 

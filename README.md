@@ -51,11 +51,11 @@ mvn versions:set -DnewVersion=X.X
 
 # Integration continous
 
-1 - package the code in a maven container
+1 - test the code in sonar
 
-2 - deploy the code in a maven container to wildfly node 1
+2 - deploy to nexus
 
-3 - deploy the code in a maven container to wildfly node 2
+3 - deploy the code in a maven container to wildfly node 1
 
 ## Add gitlab runner
 
