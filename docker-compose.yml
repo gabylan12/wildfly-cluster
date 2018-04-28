@@ -18,10 +18,10 @@ services:
         ipv4_address: 10.5.0.2
   node2:
     container_name: node2
-    build: 
+    build:
      context: .
      dockerfile: Dockerfile
-     args: 
+     args:
       NODE: -Djboss.node.name=server2
       NODE_NAME: node2
     ports:
@@ -36,6 +36,10 @@ services:
     container_name: gitlab
     image: gitlab/gitlab-ce:10.7.1-ce.0
     hostname: 192.168.99.100
+    volumes:
+     - "/hosthome/gabriel/docker/jboss/gitlab/config:/etc/gitlab"
+     - "/hosthome/gabriel/docker/jboss/gitlab/logs:/var/log/gitlab"
+     - "/hosthome/gabriel/docker/jboss/gitlab/data:/var/opt/gitlab"
     ports:
      - "80:80"
   gitlab-runner:

@@ -30,10 +30,10 @@ a gitlab runner to run the CI server
 ## Test cluster
 
 node 1
-http://localhost:8080/http-1.1-SNAPSHOT/MyServlet?param1=value1
+http://localhost:8080/http/MyServlet?param1=value1
 
 node 2
-http://localhost:8081/http-1.1-SNAPSHOT/MyServlet?param1=value2
+http://localhost:8081/http/MyServlet?param1=value2
 
 ## Compile code
 
@@ -55,7 +55,11 @@ mvn versions:set -DnewVersion=X.X
 
 2 - deploy to nexus
 
+3 - get the generated artifact from nexus
+
 3 - deploy the code in a maven container to wildfly node 1
+
+4 - deploy the code in a maven container to wildfly node 2
 
 ## Add gitlab runner
 
