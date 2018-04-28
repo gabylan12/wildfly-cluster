@@ -23,7 +23,7 @@ variables:
 #   - mvn deploy --settings settings.xml
 
 
-deploy-node1:
+deploy-fuck-node1:
   stage: deploy
   image: debian:jessie-slim
   script:
