@@ -2,19 +2,23 @@ cache:
   paths:
     - .m2/
 
-before_script:
-  - echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                            https://maven.apache.org/xsd/settings-1.0.0.xsd">
-                <localRepository>'$PWD'.m2</localRepository>
-          </settings>' > $HOME/.m2/settings.xml
+image: maven:3.5-slim
+
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2
 
 test:
   stage: test
-  image: maven:3.5-slim
   script:
    - mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
+
+deploy-nexus:
+  stage: deploy
+  script:
+   - mvn deploy --settings settings.xml
+
+
+
 
 deploy-node1:
   stage: deploy
