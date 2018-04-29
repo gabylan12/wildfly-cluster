@@ -12,7 +12,7 @@ image: maven:3.5-slim
 
 variables:
    MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2
-   VERSION: '1.7-SNAPSHOT'
+   VERSION: '1.8-SNAPSHOT'
    SERVER_NEXUS: '192.168.99.100:8580'
    SERVER_WILDFLY_NODE1: '192.168.99.100'
    SERVER_WILDFLY_NODE2: '192.168.99.100'
@@ -43,10 +43,10 @@ deploy_staging:
   stage: deploy
   image: jboss/wildfly:11.0.0.Final
   script:
-     -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=${SERVER_WILDFLY_NODE1}:{$SERVER_WILDFLY_PORT1} --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
+     -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=$SERVER_WILDFLY_NODE1:$SERVER_WILDFLY_PORT1 --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
   environment:
     name: staging
-    url: https://192.168.99.100:8080
+    url: http://192.168.99.100:8080/http/MyServlet?param1=value1
   dependencies:
    - get-artifacts
   only:
@@ -56,10 +56,10 @@ deploy_production:
   stage: deploy
   image: jboss/wildfly:11.0.0.Final
   script:
-     -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=${SERVER_WILDFLY_NODE2}:${SERVER_WILDFLY_PORT2} --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
+     -   /opt/jboss/wildfly/bin/jboss-cli.sh -c controller=$SERVER_WILDFLY_NODE2:$SERVER_WILDFLY_PORT2 --user=admin --password='Admin#70365' --command="deploy --force artifacts/http.war"
   environment:
     name: production
-    url: https://192.168.99.100:8081
+    url: http://192.168.99.100:8081/http/MyServlet?param1=value1
   when: manual
   dependencies:
    - get-artifacts
