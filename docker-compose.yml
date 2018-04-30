@@ -61,6 +61,12 @@ services:
      image: sonatype/nexus:2.14.8-01
      ports:
       - "8580:8081"
+  mail:
+     container_name: mail
+     image: mailhog/mailhog
+     ports:
+       - "1025:1025"
+       - "8025:8025"
 networks:
  vpcbr:
     driver: bridge

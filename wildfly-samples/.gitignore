@@ -1,5 +1,6 @@
 .idea/*
 *.versionsBackup
+*.iml
 
 # Compiled class file
 *.class
